@@ -1,0 +1,87 @@
+-- CTE 1: Preparando as transações com a identificação de transações anteriores
+    SELECT
+        customer_transaction_id,
+        csn_customer_id,
+        amount_from_balance,
+        transaction_date::timestamp as transaction_date,
+        csn_game_id,
+        csn_cust_transaction_type_id,
+        current_balance,
+
+        --Isso cria a coluna prev_transaction_date, que vai armazenar a data da transação anterior de cada cliente
+        LAG(transaction_date) OVER (PARTITION BY csn_customer_id ORDER BY transaction_date) AS prev_transaction_date,
+
+        --acessar o jogo anterior do cliente, criando a coluna prev_csn_game_id
+        LAG(csn_game_id) OVER (PARTITION BY csn_customer_id ORDER BY transaction_date) AS prev_csn_game_id
+
+    INTO TEMP transaction_diff
+    FROM customer_transactions_view
+    WHERE transaction_date BETWEEN '2024-12-03 06:00:00' AND '2024-12-04 05:59:59'
+      AND transaction_date IS NOT NULL
+      AND csn_customer_id IS NOT NULL
+      AND csn_game_id IS NOT NULL
+
+
+
+-- CTE 2: Calculando o novo campo `new_session` e `session_diff` (mudança no intervalo de tempo, jogo ou cliente)
+    SELECT
+        td.customer_transaction_id,
+        td.csn_customer_id,
+        td.amount_from_balance,
+        td.transaction_date,
+        td.prev_transaction_date,
+        td.csn_game_id,
+        td.prev_csn_game_id,
+        td.csn_cust_transaction_type_id,
+        td.current_balance,
+
+
+        EXTRACT(EPOCH FROM (td.transaction_date - td.prev_transaction_date)) AS session_diff,
+
+
+
+
+        -- Identificando se é uma nova sessão com base nas regras
+        CASE
+            WHEN EXTRACT(EPOCH FROM (td.transaction_date - td.prev_transaction_date)) > 1200 THEN 1  -- Intervalo maior que 1200 segundos
+            WHEN td.csn_game_id != td.prev_csn_game_id THEN 1  -- Mudança no jogo
+            WHEN td.csn_customer_id != LAG(td.csn_customer_id) OVER (PARTITION BY td.csn_customer_id ORDER BY td.transaction_date) THEN 1  -- Mudança de cliente
+            ELSE 0
+        END AS new_session
+    INTO TEMP session_flags
+    FROM transaction_diff td
+
+
+
+-- CTE 3: Gerando um sessionid incremental para cada nova sessão
+    SELECT
+        sf.customer_transaction_id,
+        sf.csn_customer_id,
+        sf.amount_from_balance,
+        sf.transaction_date,
+        sf.csn_game_id,
+        sf.csn_cust_transaction_type_id,
+        sf.current_balance,
+        sf.session_diff,
+        sf.new_session,
+
+        -- Gerando sessionid incremental
+        SUM(sf.new_session) OVER (PARTITION BY sf.csn_customer_id ORDER BY sf.transaction_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS sessionid
+into temp incremental_sessions
+FROM session_flags sf
+
+
+-- Resultado final com sessionid incremental
+SELECT
+    customer_transaction_id,
+    csn_customer_id,
+    amount_from_balance,
+    transaction_date,
+    csn_game_id,
+    csn_cust_transaction_type_id,
+    current_balance,
+    session_diff,
+    new_session,
+    sessionid
+FROM incremental_sessions
+ORDER BY csn_customer_id, transaction_date;
