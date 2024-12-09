@@ -1,0 +1,23 @@
+{
+  "variables" : [ {
+    "name" : "SERVER_POSTGRES",
+    "value" : "sportingtech.upsports.app",
+    "description" : ""
+  }, {
+    "name" : "PORT_POSTGRES",
+    "value" : "5434",
+    "description" : ""
+  }, {
+    "name" : "USER_POSTGRES",
+    "value" : "view_user",
+    "description" : ""
+  }, {
+    "name" : "PASS_POSTGRES",
+    "value" : "Encrypted 2be98afc86aa7f2e4be09ac75cac3fd89",
+    "description" : ""
+  }, {
+    "name" : "DATABASE_NAME_POSTGRES",
+    "value" : "sporting_tech",
+    "description" : ""
+  } ]
+}
