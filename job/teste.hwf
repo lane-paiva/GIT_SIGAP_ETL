@@ -41,9 +41,7 @@
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>C:\Users\admin\OneDrive - Upbet\Documentos\transformacao\teste_jogos_online_v2.hpl</filename>
-      <logext/>
-      <logfile/>
+      <filename>${PROJECT_HOME}/transformacao/teste_jogos_online_v2.hpl</filename>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -54,14 +52,66 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>240</xloc>
+      <xloc>416</xloc>
+      <yloc>48</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Write to log</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <loglevel>Basic</loglevel>
+      <logmessage>EBAAA, DEU CERTO COM OS SEGUINTES PERÍODOS: ${DATA_INI} e ${DATA_FIM}</logmessage>
+      <logsubject/>
+      <parallel>N</parallel>
+      <xloc>656</xloc>
+      <yloc>48</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Set variables</name>
+      <description/>
+      <type>SET_VARIABLES</type>
+      <attributes/>
+      <fields>
+        <field>
+          <variable_name>DATA_INI</variable_name>
+          <variable_type>JVM</variable_type>
+          <variable_value>2024-12-03 06:00:00</variable_value>
+        </field>
+        <field>
+          <variable_name>DATA_FIM</variable_name>
+          <variable_type>JVM</variable_type>
+          <variable_value>2024-12-04 05:59:59</variable_value>
+        </field>
+      </fields>
+      <file_variable_type>JVM</file_variable_type>
+      <filename/>
+      <replacevars>N</replacevars>
+      <parallel>N</parallel>
+      <xloc>224</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
   </actions>
   <hops>
     <hop>
+      <from>teste_jogos_online_v2.hpl</from>
+      <to>Write to log</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
       <from>Start</from>
+      <to>Set variables</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Set variables</from>
       <to>teste_jogos_online_v2.hpl</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
