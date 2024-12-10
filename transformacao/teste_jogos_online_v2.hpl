@@ -33,19 +33,16 @@
       <fontitalic>N</fontitalic>
       <fontname>Segoe UI</fontname>
       <fontsize>9</fontsize>
-      <height>26</height>
-      <xloc>704</xloc>
-      <yloc>144</yloc>
-      <note>TESTE</note>
-      <width>41</width>
+      <height>57</height>
+      <xloc>1104</xloc>
+      <yloc>112</yloc>
+      <note>- trazer os dados da funcao da sessao (ja validada pelo Melo)
+
+- O calculo de tempo total da primeira transação da sessão e da ultima transação da sessão</note>
+      <width>489</width>
     </notepad>
   </notepads>
   <order>
-    <hop>
-      <from>Table input</from>
-      <to>Select values</to>
-      <enabled>Y</enabled>
-    </hop>
     <hop>
       <from>Select values</from>
       <to>Formula</to>
@@ -99,6 +96,11 @@
     <hop>
       <from>Get variables</from>
       <to>Table input</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table input</from>
+      <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -194,10 +196,7 @@
     </partitioning>
     <fields>
       <field>
-        <currency/>
-        <decimal/>
         <format>yyyy-MM-dd HH:mm:ss</format>
-        <group/>
         <length>-1</length>
         <name>DATA_INI</name>
         <precision>-1</precision>
@@ -206,10 +205,7 @@
         <variable>${DATA_INI}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
         <format>yyyy-MM-dd HH:mm:ss</format>
-        <group/>
         <length>-1</length>
         <name>DATA_FIM</name>
         <precision>-1</precision>
@@ -220,8 +216,8 @@
     </fields>
     <attributes/>
     <GUI>
-      <xloc>128</xloc>
-      <yloc>64</yloc>
+      <xloc>176</xloc>
+      <yloc>48</yloc>
     </GUI>
   </transform>
   <transform>
@@ -666,7 +662,7 @@ where transaction_date between ? and ?</sql>
     <variables_active>N</variables_active>
     <attributes/>
     <GUI>
-      <xloc>128</xloc>
+      <xloc>176</xloc>
       <yloc>208</yloc>
     </GUI>
   </transform>
